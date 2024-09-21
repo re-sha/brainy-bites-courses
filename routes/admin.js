@@ -2,24 +2,34 @@ const { Router } = require("express")
 const adminRouter = Router();
 const { AdminModel} = require("../db")
 
-adminRouter.post("/admin/signup", function(req, res) {
-
+adminRouter.post("/signup", function(req, res) {
+    res.json({
+        msg: "sign-up"
+    })
 })
 
-adminRouter.post("/admin/login", function(req, res) {
-    
+adminRouter.post("/login", function(req, res) {
+    res.json({
+        msg: "login"
+    })
 })
 
-adminRouter.post("/admin/create", function(req, res) {
-    
+adminRouter.post("/course", function(req, res) {
+    res.json({
+        msg: "create course endpoint"
+    })
 })
 
-adminRouter.delete("", function(req, res) {
-    
+adminRouter.put("/course", function(req, res) {
+    res.json({
+        msg: "update course endpoint"  
+    })
 })
 
-adminRouter.patch("/admin/course", function(req, res) {
-    
+adminRouter.get("/course/bulk", function(req, res) {
+    res.json({
+        msg: "get all courses endpoint"
+    })
 })
 
 module.exports = {
