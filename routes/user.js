@@ -3,6 +3,8 @@ const userRouter = Router();
 const { UserModel } = require("../db")
 const { z } = require("zod")
 const bcrypt = require("bcrypt")
+const jwt = require("jsonwebtoken")
+const JWT_USER_PASSWORD = "wqaeyg23"
 
 userRouter.post("/signup", async function(req, res) {
     const requiredBody = z.object({
@@ -49,27 +51,31 @@ userRouter.post("/signup", async function(req, res) {
 })
 
 userRouter.post("/login", async function(req, res) {
-    const email = req.body.email
-    const password = req.body.password
-
-    const foundEmail = await UserModel.findOne({
+    const { email, password } = req.body;
+    const user = await UserModel.findOne({
         email: email
     })
 
-    if(!foundEmail){
+    if(!user){
         return res.status(400).json({
             msg: "User does not exist"
         })
     }
-    const comparePassword = bcrypt.compare(password, foundEmail.password)
-    if (foundEmail){
-        //token sign
-    }
-    else 
-        return res.status(404).json({
-            msg: "User does not exist"
-        })
 
+    const comparePassword = await bcrypt.compare(password, user.password)
+    console.log(comparePassword)
+    if(!comparePassword){
+        return res.status(400).json({
+            msg: "Incorrect password"
+        })
+    }
+    const token = jwt.sign({
+        id: user._id
+    }, JWT_USER_PASSWORD)
+    res.json({
+        msg: 'Logged in successfully',
+        token: token
+    })
 })
 
 userRouter.get("/purchases", function(req, res) { //endpoint to see all purchased courses
