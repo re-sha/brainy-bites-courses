@@ -4,7 +4,7 @@ const { AdminModel} = require("../db")
 const {z} = require("zod")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
-const JWT_USER_PASSWORD = "wqaeyg23"
+const JWT_ADMIN_PASSWORD = "43tr7ffq4weyio"
 
 adminRouter.post("/signup", async function(req, res) {
     const requiredBody = z.object({
