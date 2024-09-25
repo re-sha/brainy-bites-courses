@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require("express")
 const mongoose = require("mongoose")
 
@@ -15,8 +16,7 @@ app.use("/api/v1/admin", adminRouter)
 async function connectToDB(){
     try{
 
-        //todo : dotenv
-        const response = await mongoose.connect("mongodb+srv://admin:V9sy6pcZGHFuFoQO@cluster0.bpeos.mongodb.net/course-app");
+        const response = await mongoose.connect(process.env.MONGO_URL);
         if(response) {
             console.log("Connected to DB successfully")
         }
