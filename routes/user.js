@@ -5,6 +5,7 @@ const { z } = require("zod")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 const { JWT_USER_PASSWORD } = require("../config")
+const { userMiddleware } = require("../middleware/user")
 
 userRouter.post("/signup", async function(req, res) {
     const requiredBody = z.object({
