@@ -80,7 +80,8 @@ adminRouter.post("/login", async function(req, res) {
 })
 
 adminRouter.post("/course", adminMiddleware, async function(req, res) {
-    const {title, description, price, imageURL, creatorId} = req.body;
+    const adminId = req.userId;
+    const { title, description, price, imageURL } = req.body;
 
     const newCourse = await CourseModel.create({
         title: title,
@@ -89,17 +90,51 @@ adminRouter.post("/course", adminMiddleware, async function(req, res) {
         imageURL: imageURL,
         creatorId: adminId
     })
+
+    if(!newCourse){
+        res.status(403).json({
+            msg: "Could not create new course"
+        })
+    }
+    else {
+        return res.status(20).json({
+            msg: 'New course created successfully',
+            courseId: course._id
+        })
+    }
 })
 
-adminRouter.put("/course", function(req, res) {
-    res.json({
-        msg: "update course endpoint"  
+adminRouter.put("/course", adminMiddleware, async function(req, res) {
+    const adminId = req.adminId;
+
+    const { title, description, price, imageURL, courseId } = req.body;
+
+    const course = await CourseModel.updateOne({
+        _id: courseId,
+        creatorId: adminId
+    },
+    {
+        title: title,
+        description: description,
+        price: price,
+        imageURL: imageURL
+    })
+
+    res.status(201).json({
+        msg: 'Course updated'
     })
 })
 
-adminRouter.get("/course/bulk", function(req, res) {
-    res.json({
-        msg: "get all courses endpoint"
+adminRouter.get("/course/bulk",adminMiddleware, async function(req, res) {
+    const adminId = req.adminId
+
+    const coursesBulk = await CourseModel.find({
+        creatorId: adminId
+    })
+
+    res.status(200).json({
+        msg: 'All courses of admin is',
+        coursesBulk
     })
 })
 
