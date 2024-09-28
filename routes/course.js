@@ -8,9 +8,10 @@ courseRouter.post("/purchase", function(req, res) { //endpoint to make a purchas
     })
 })
 
-courseRouter.get("/preview", function(req, res) {
+courseRouter.get("/preview", async function(req, res) {
+    const courses = await CourseModel.find({})
     res.json({
-        msg : "course preview endpoint"
+        courses
     })
 })
 
