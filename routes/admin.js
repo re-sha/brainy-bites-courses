@@ -51,7 +51,7 @@ adminRouter.post("/signup", async function(req, res) {
     }
 })
 
-adminRouter.post("/login", async function(req, res) {
+adminRouter.post("/signin", async function(req, res) {
     const { email, password } = req.body;
     const admin = await AdminModel.findOne({
         email: email
@@ -64,7 +64,6 @@ adminRouter.post("/login", async function(req, res) {
     }
 
     const comparePassword = await bcrypt.compare(password, admin.password)
-    console.log(comparePassword)
     if(!comparePassword){
         return res.status(400).json({
             msg: "Incorrect password"
@@ -80,7 +79,7 @@ adminRouter.post("/login", async function(req, res) {
 })
 
 adminRouter.post("/course", adminMiddleware, async function(req, res) {
-    const adminId = req.userId;
+    const adminId = req.adminId;
     const { title, description, price, imageURL } = req.body;
 
     const newCourse = await CourseModel.create({
@@ -90,16 +89,16 @@ adminRouter.post("/course", adminMiddleware, async function(req, res) {
         imageURL: imageURL,
         creatorId: adminId
     })
-
+ 
     if(!newCourse){
         res.status(403).json({
             msg: "Could not create new course"
         })
     }
     else {
-        return res.status(20).json({
+        return res.status(200).json({
             msg: 'New course created successfully',
-            courseId: course._id
+            courseId: newCourse._id
         })
     }
 })
@@ -108,19 +107,16 @@ adminRouter.put("/course", adminMiddleware, async function(req, res) {
     const adminId = req.adminId;
 
     const { title, description, price, imageURL, courseId } = req.body;
+    const course = await CourseModel.updateOne(
+        {  _id: courseId, creatorId: adminId },
+        {
+            title: title,
+            description: description,
+            price: price,
+            imageURL: imageURL
+        })
 
-    const course = await CourseModel.updateOne({
-        _id: courseId,
-        creatorId: adminId
-    },
-    {
-        title: title,
-        description: description,
-        price: price,
-        imageURL: imageURL
-    })
-
-    res.status(201).json({
+    res.json({
         msg: 'Course updated'
     })
 })
